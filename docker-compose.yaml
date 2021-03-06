@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  php:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+    - ./:/var/www/html
+
+  redis:
+    image: redis
+    volumes:
+      - ./redis-data:
+
