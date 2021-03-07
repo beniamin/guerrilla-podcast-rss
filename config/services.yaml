@@ -5,8 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     podcasts_urls:
-        - "https://www.guerrillaradio.ro/emisiuni/muzica-de-pus-pe-ganduri/"
-        - "https://www.guerrillaradio.ro/emisiuni/muzica-despre-cine-suntem/"
+        muzica-de-pus-pe-ganduri: "https://www.guerrillaradio.ro/emisiuni/muzica-de-pus-pe-ganduri/"
+        muzica-despre-cine-suntem: "https://www.guerrillaradio.ro/emisiuni/muzica-despre-cine-suntem/"
 
 services:
     # default configuration for services in *this* file

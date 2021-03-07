@@ -6,20 +6,17 @@ namespace App\Service;
 
 use App\Entity\Episode;
 use App\Entity\Podcast;
+use ID3Parser\ID3Parser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PodcastPageParser
 {
-
-    private const EPISODE_PATTERN = '/podcast-img">.+?<img.+?src="(\S+?(?>jpg|png))".+?<audio.+?src="(.+?)"><\/audio>.+?track_title"\>(.+?)\<\/div/sm';
-    private const TITLE_PATTER = '/title\>(.+?)<\/title/';
-
-
     private HttpClientInterface $client;
+    private ID3Parser $id3Engine;
 
     public function __construct(HttpClientInterface $client)
     {
-
         $this->client = $client;
     }
 
@@ -29,24 +26,27 @@ class PodcastPageParser
 
         $content = $response->getContent(true);
 
-        $title = "";
-        preg_match(self::TITLE_PATTER, $content, $titleMatch);
+        $crawler = new Crawler($content);
 
-        $podcast = new Podcast($titleMatch[1] ?? "", $podcastUrl);
-
-        $matches = [];
-        preg_match_all(
-            self::EPISODE_PATTERN,
-            $content,
-            $matches,
-            PREG_SET_ORDER
+        $podcast = new Podcast(
+            $crawler->filter('header .post-title')->text(),
+            $podcastUrl,
+            $crawler->filter('meta[property="og:image"]')->attr('content'),
+            $crawler->filter('div.single-realizator-container a')->text(),
+            $crawler->filter('head > meta[property="og:description"]')->last()->attr('content'),
         );
 
-        foreach ($matches as $match) {
-            $podcast->addEpisodes(
-                new Episode($match[1], $match[2], $match[3])
+        $crawler->filter('div.podcast_list .podcast-sharer')->each(function(Crawler $node, $i) use ($podcast) {
+            $title = $node->filter('.track_title')->text();
+            preg_match('/(\d+\.\d+\.\d+)/', $title, $match);
+            $podcast->addEpisode(
+                new Episode(
+                    $node->filter('audio source')->attr('src'),
+                    $title,
+                    new \DateTime($match[1])
+                )
             );
-        }
+        });
 
         return $podcast;
     }
