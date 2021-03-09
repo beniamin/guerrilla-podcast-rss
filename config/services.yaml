@@ -8,6 +8,7 @@ parameters:
         muzica-de-pus-pe-ganduri: "https://www.guerrillaradio.ro/emisiuni/muzica-de-pus-pe-ganduri/"
         muzica-despre-cine-suntem: "https://www.guerrillaradio.ro/emisiuni/muzica-despre-cine-suntem/"
         garana-jazz: "https://www.guerrillaradio.ro/emisiuni/garana-jazz/"
+        guerrilive: "https://www.guerrillaradio.ro/emisiuni/guerrilive/"
 
 services:
     # default configuration for services in *this* file
